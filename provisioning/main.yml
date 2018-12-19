@@ -1,0 +1,30 @@
+---
+
+- name: "Run task for provision local machine"
+  hosts: all
+  become: yes
+
+  tasks:
+
+  - name: "Update objects"
+    apt:
+      update_cache: yes
+
+  - name: "Update packages to last version"
+    apt:
+      upgrade: dist
+
+  - name: "Install dependencies"
+    apt:
+      name: "{{ dependencies }}"
+    vars:
+      dependencies:
+      - curl
+      - openssh-server
+      - ca-certificates
+
+  - name: "Add gitlab package repository"
+    shell: "curl https://packages.gitlab.com/install/repositories/gitlab/gitlab-ee/script.deb.sh | sudo bash"
+
+  - name: "Configure service localhost"
+    shell: 'sudo EXTERNAL_URL="http://localhost" apt-get install gitlab-ee'
